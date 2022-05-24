@@ -1,0 +1,224 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+#include <vector>
+#include <ctime>
+
+#include "Unit1.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+using namespace std;
+
+TForm1 *Form1;
+Graphics::TBitmap *Ris1 = new Graphics::TBitmap(), *Ris2 = new Graphics::TBitmap();
+int l=0,r=0,d=0,u=0,X1 = 0, Y1 = 0, tm = 0, sl = 50, sls = 5, kol = 0,looo = 0, krx = 0, bim = 0, kkk = 1;
+int rn;
+struct ed
+{
+	int XX;
+	int YY;
+//	Graphics::TBitmap *RR = new Graphics::TBitmap();
+	int ind;
+};
+struct bimb
+{
+	int XB;
+	int YB;
+};
+vector <bimb> bib;
+vector <TBitmap*> foodbtm(5);
+vector <ed> eda;
+void TForm1::end()
+{
+	Timer1 -> Enabled = false;
+	Image2 -> Visible = false;
+	Image3 -> Visible = false;
+	Image1 -> Picture -> LoadFromFile("fonend.bmp");
+	BitBtn6 -> Visible = true;
+	Label1 -> Visible = false;
+}
+void TForm1::restart()
+{
+	l=0;
+	r=0;
+	d=0;
+	u=0;
+	X1 = 0;
+	Y1 = 0;
+	tm = 0;
+	sl = 50;
+	sls = 5;
+	kol = 0;
+	looo = 0;
+	krx = 1;
+	kkk = 1;
+	eda.clear();
+	BitBtn1 -> Visible = false;
+	BitBtn2 -> Visible = true;
+	BitBtn3 -> Visible = true;
+	BitBtn4 -> Visible = true;
+	BitBtn5 -> Visible = true;
+	BitBtn6 -> Visible = false;
+	bim = 0;
+}
+void TForm1::start()
+{
+	Timer1 -> Enabled = true;
+	Image2 -> Visible = true;
+	Image3 -> Visible = true;
+	Image1 -> Picture -> LoadFromFile("fon.bmp");
+	BitBtn2 -> Visible = false;
+	BitBtn3 -> Visible = false;
+	BitBtn4 -> Visible = false;
+	BitBtn5 -> Visible = false;
+    Label1 -> Visible = true;
+}
+
+
+
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+	: TForm(Owner)
+{
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormCreate(TObject *Sender)
+{
+    Image1 -> Picture -> LoadFromFile("fonstart.bmp");
+	srand(time(NULL));
+	Image3 -> Canvas -> Pen -> Color = clWhite;
+	Image2 -> Canvas -> Pen -> Color = clWhite;
+	Image3 -> Canvas -> Rectangle(0,0, Image2 -> Width, Image2 -> Height);
+	Ris1 -> LoadFromFile("chel.bmp");
+	Ris1 -> Transparent = true;
+	Ris2 -> LoadFromFile("krest.bmp");
+	Ris2 -> Transparent = true;
+	foodbtm[0] = new Graphics::TBitmap();
+	foodbtm[1] = new Graphics::TBitmap();
+	foodbtm[2] = new Graphics::TBitmap();
+	foodbtm[3] = new Graphics::TBitmap();
+	foodbtm[4] = new Graphics::TBitmap();
+	foodbtm[0] -> LoadFromFile("banan.bmp");
+	foodbtm[1] -> LoadFromFile("kakos.bmp");
+	foodbtm[2] -> LoadFromFile("vishnya.bmp");
+	foodbtm[3] -> LoadFromFile("yabloko.bmp");
+	foodbtm[4] -> LoadFromFile("mango.bmp");
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::Image3MouseMove(TObject *Sender, TShiftState Shift, int X,
+		  int Y)
+{
+
+	//Image3 -> Canvas -> Rectangle(0,0, Image3 -> Width, Image3 -> Height);
+	if (X > 713 - (Ris1 -> Width)/2)
+		X = 713 - (Ris1 -> Width)/2;
+	if (X < (Ris1 -> Width)/2)
+		X = (Ris1 -> Width)/2;
+	X1 = X;
+	Y1 = 745 - Ris1 -> Height;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Timer1Timer(TObject *Sender)
+{
+	Image2 -> Canvas -> Rectangle(0,0, Image2 -> Width, Image2 -> Height);
+	tm++;
+	if (tm == kkk)
+	{
+		ed k;
+		k.XX = rand() % 673;
+		k.YY = 0;
+		k.ind = rand() % 5;
+		eda.push_back(k);
+		kkk = rand() % sl + 6;
+		tm = 0;
+	}
+		if (looo == 3)
+		{
+			end();
+		}
+	for (int i = 0; i < eda.size(); i++)
+	{
+		eda[i].YY += sls;
+		Image2 -> Canvas -> Draw(eda[i].XX,eda[i].YY,foodbtm[eda[i].ind]);
+		if (eda[i].YY > 745)
+		{
+			eda.erase(eda.begin() + i);
+			i--;
+			looo++;
+			Image1 -> Canvas -> Draw (krx,0,Ris2);
+			krx += 80;
+		}
+		if ((eda[i].YY < 715) && (eda[i].YY > (745 - (Ris1 -> Height)/2)) && ((eda[i].XX + (foodbtm[eda[i].ind] -> Width)/2) > (X1 - (Ris1 -> Width)/2)) && (((eda[i].XX + (foodbtm[eda[i].ind] -> Width/2))) < ((X1 + (Ris1 -> Width)/2))))
+		{
+			eda.erase(eda.begin() + i);
+			i--;
+			kol++;
+			Label1 -> Caption = kol;
+		}
+
+
+
+	}
+	Image2 -> Canvas -> Draw (X1 - (Ris1 -> Width)/2,745 - Ris1 -> Height,Ris1);
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::BitBtn1Click(TObject *Sender)
+{
+	BitBtn1 -> Visible = false;
+	BitBtn2 -> Visible = true;
+	BitBtn3 -> Visible = true;
+	BitBtn4 -> Visible = true;
+	BitBtn5 -> Visible = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BitBtn2Click(TObject *Sender)
+{
+	sl = 60;
+	sls = 5;
+	start();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BitBtn3Click(TObject *Sender)
+{
+	sl = 45;
+	sls = 7;
+	start();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BitBtn4Click(TObject *Sender)
+{
+	sl = 30;
+	sls = 9;
+    start();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BitBtn5Click(TObject *Sender)
+{
+	sl = 5;
+	sls = 17;
+	start();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BitBtn6Click(TObject *Sender)
+{
+	restart();
+}
+//---------------------------------------------------------------------------
+
